@@ -3,7 +3,12 @@
 	"package": "mrkartoshki.fling.client.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"client": [
-		"ExampleClientMixin"
+		"KeyboardHandlerMixin",
+		"ItemEntityRendererMixin",
+		"ItemEntityRenderStateMixin",
+		"EntityAccessor",
+		"ItemStackRenderStateAccessor",
+		"LayerRenderStateAccessor"
 	],
 	"injectors": {
 		"defaultRequire": 1
