@@ -22,9 +22,11 @@ import net.minecraft.world.phys.Vec3;
 public class Fling implements ModInitializer {
 	public static final String MOD_ID = "fling";
 	public static final String FLOATING_ITEM_TAG = "fling_floating_item";
+	public static final SoundEvent FLING_FX = SoundEvent.createVariableRangeEvent(id("fling-fx"));
 
 	@Override
 	public void onInitialize() {
+		Registry.register(BuiltInRegistries.SOUND_EVENT, id("fling-fx"), FLING_FX);
 		PayloadTypeRegistry.serverboundPlay().register(ThrowPayload.TYPE, ThrowPayload.CODEC);
 		PayloadTypeRegistry.serverboundPlay().register(CatchPayload.TYPE, CatchPayload.CODEC);
 		ServerPlayNetworking.registerGlobalReceiver(ThrowPayload.TYPE, (payload, context) -> {
@@ -96,7 +98,7 @@ public class Fling implements ModInitializer {
 		entity.setPickUpDelay(10);
 		entity.setDeltaMovement(velocity);
 		if (player.level().addFreshEntity(entity)) {
-			player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.EGG_THROW, SoundSource.PLAYERS, 0.7F, 0.9F);
+			player.level().playSound(null, player.getX(), player.getY(), player.getZ(), FLING_FX, SoundSource.PLAYERS, 0.7F, 1.0F);
 		} else {
 			player.getInventory().add(thrown);
 		}
