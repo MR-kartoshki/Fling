@@ -1,0 +1,37 @@
+{
+	"schemaVersion": 1,
+	"id": "fling",
+	"version": "${version}",
+	"name": "Fling",
+	"description": "Fling your items!",
+	"authors": [
+		"MR-kartoshki"
+	],
+	"contact": {
+		"sources": "https://github.com/MR-kartoshki/Fling"
+	},
+	"license": "MIT",
+	"icon": "assets/fling/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"mrkartoshki.fling.Fling"
+		],
+		"client": [
+			"mrkartoshki.fling.client.FlingClient"
+		]
+	},
+	"mixins": [
+		"fling.mixins.json",
+		{
+			"config": "fling.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~26.3",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}
