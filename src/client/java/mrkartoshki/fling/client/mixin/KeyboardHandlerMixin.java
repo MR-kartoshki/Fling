@@ -39,7 +39,7 @@ public abstract class KeyboardHandlerMixin {
 		if (action == 1 && !fling$charging) {
 			fling$charging = true;
 			fling$chargeStartedAt = Util.getNanos();
-			fling$wholeStack = event.modifiers() != 0;
+			fling$wholeStack = (event.modifiers() & 0x0002) != 0;
 		} else if (action == 0 && fling$charging) {
 			long chargeNanos = Math.min(Util.getNanos() - fling$chargeStartedAt, MAX_CHARGE_NANOS);
 			fling$charging = false;
