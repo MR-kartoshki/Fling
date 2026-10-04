@@ -26,7 +26,7 @@ public final class ItemPhysics {
 		float motion = (float) velocity.length();
 		float rotateBy = CLIENT.getDeltaTracker().getRealtimeDeltaTicks() * 0.25F * ROTATE_SPEED * Math.min(1.0F, motion * 2.0F);
 		if (CLIENT.isPaused()) {
-			rotateBy = 0;
+			return;
 		}
 
 		boolean block = ((ItemEntityRenderStateExt) state).fling$isBlock();

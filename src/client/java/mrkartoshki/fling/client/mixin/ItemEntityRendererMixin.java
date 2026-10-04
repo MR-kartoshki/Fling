@@ -3,6 +3,7 @@ package mrkartoshki.fling.client.mixin;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mrkartoshki.fling.client.ItemEntityRenderStateExt;
 import mrkartoshki.fling.client.ItemPhysics;
+import mrkartoshki.fling.FlingConfig;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -30,12 +31,14 @@ public abstract class ItemEntityRendererMixin extends EntityRenderer<ItemEntity,
 
 	@Inject(method = "extractRenderState(Lnet/minecraft/world/entity/item/ItemEntity;Lnet/minecraft/client/renderer/entity/state/ItemEntityRenderState;F)V", at = @At("TAIL"))
 	private void fling$extractPhysics(ItemEntity entity, ItemEntityRenderState state, float partialTick, CallbackInfo ci) {
-		((ItemEntityRenderStateExt) state).fling$extractPhysics(entity);
+		if (FlingConfig.get().customRendering) {
+			((ItemEntityRenderStateExt) state).fling$extractPhysics(entity);
+		}
 	}
 
 	@Inject(method = "submit(Lnet/minecraft/client/renderer/entity/state/ItemEntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/level/CameraRenderState;)V", at = @At("HEAD"), cancellable = true)
 	private void fling$submitPhysics(ItemEntityRenderState state, PoseStack pose, SubmitNodeCollector collector, CameraRenderState camera, CallbackInfo ci) {
-		if (ItemPhysics.submit(state, pose, collector, camera, random)) {
+		if (FlingConfig.get().customRendering && ItemPhysics.submit(state, pose, collector, camera, random)) {
 			super.submit(state, pose, collector, camera);
 			ci.cancel();
 		}

@@ -1,0 +1,13 @@
+{
+  "fling.charge.single": "Single item · %s%%",
+  "fling.charge.stack": "Whole stack · %s%%",
+  "fling.config.title": "Fling settings",
+  "fling.config.throwing": "Throwing: %s",
+  "fling.config.catching": "Catching: %s",
+  "fling.config.rendering": "Custom item rendering: %s",
+  "fling.config.duration": "Charge duration: %s seconds",
+  "fling.config.strength": "Throw strength: %s×",
+  "fling.config.save": "Save",
+  "fling.config.server_controls": "Server settings limit throwing and catching.",
+  "fling.config.save_error": "Could not save settings. Check the game log."
+}

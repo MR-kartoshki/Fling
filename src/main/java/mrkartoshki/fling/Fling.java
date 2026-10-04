@@ -2,11 +2,11 @@ package mrkartoshki.fling;
 
 import mrkartoshki.fling.network.ThrowPayload;
 import mrkartoshki.fling.network.CatchPayload;
+import mrkartoshki.fling.network.SettingsPayload;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.fabricmc.fabric.api.event.player.UseEntityCallback;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.resources.Identifier;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -26,11 +26,18 @@ public class Fling implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		FlingConfig.load();
+		PayloadTypeRegistry.clientboundPlay().register(SettingsPayload.TYPE, SettingsPayload.CODEC);
+		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+			if (ServerPlayNetworking.canSend(handler.player, SettingsPayload.TYPE)) {
+				ServerPlayNetworking.send(handler.player, SettingsPayload.current());
+			}
+		});
 		Registry.register(BuiltInRegistries.SOUND_EVENT, id("fling-fx"), FLING_FX);
 		PayloadTypeRegistry.serverboundPlay().register(ThrowPayload.TYPE, ThrowPayload.CODEC);
 		PayloadTypeRegistry.serverboundPlay().register(CatchPayload.TYPE, CatchPayload.CODEC);
 		ServerPlayNetworking.registerGlobalReceiver(ThrowPayload.TYPE, (payload, context) -> {
-			if (Float.isFinite(payload.charge())) {
+			if (FlingConfig.get().throwing && context.player().isAlive() && !context.player().isSpectator() && Float.isFinite(payload.charge())) {
 				float charge = Math.clamp(payload.charge(), 0.0F, 1.0F);
 				if (charge < 0.075F) {
 					ServerPlayer player = context.player();
@@ -53,28 +60,20 @@ public class Fling implements ModInitializer {
 	}
 
 	private static void catchItem(ServerPlayer player, int entityId) {
-		if (player.isSpectator() || !player.isAlive()) {
+		if (!FlingConfig.get().catching || player.isSpectator() || !player.isAlive()) {
 			return;
 		}
 		var entity = player.level().getEntity(entityId);
 		if (!(entity instanceof ItemEntity item) || item.isRemoved() || item.hasPickUpDelay()
-			|| !player.getBoundingBox().inflate(1.0).intersects(item.getBoundingBox())) {
+			|| !player.getBoundingBox().inflate(1.0).intersects(item.getBoundingBox())
+			|| !player.hasLineOfSight(item)) {
 			return;
 		}
 
-		ItemStack stack = item.getItem();
-		if (stack.isEmpty()) {
-			return;
-		}
-		ItemStack remaining = stack.copy();
-		player.getInventory().add(remaining);
-		if (remaining.getCount() != stack.getCount()) {
-			if (remaining.isEmpty()) {
-				item.discard();
-			} else {
-				item.setItem(remaining);
-			}
-			player.take(item, stack.getCount() - remaining.getCount());
+		int count = item.getItem().getCount();
+		item.playerTouch(player);
+		if (item.isRemoved() || item.getItem().getCount() < count) {
+			player.containerMenu.broadcastChanges();
 			player.level().playSound(null, item.getX(), item.getY(), item.getZ(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.7F, 1.0F);
 		}
 	}
@@ -87,7 +86,7 @@ public class Fling implements ModInitializer {
 
 		Vec3 look = player.getLookAngle();
 		float strength = (float) (1.0 - Math.exp(-2.302585 * charge));
-		float speed = 0.15F + 1.5F * strength;
+		float speed = (0.15F + 1.5F * strength) * FlingConfig.get().throwStrength;
 		Vec3 velocity = new Vec3(look.x * speed, look.y * speed - (0.2F * (1.0F - strength)), look.z * speed);
 		ItemStack thrown = held.copyWithCount(wholeStack ? held.getCount() : 1);
 		Vec3 spawn = player.getEyePosition().add(look.scale(0.55));

@@ -10,12 +10,15 @@
 	"contact": {
 		"sources": "https://github.com/MR-kartoshki/Fling"
 	},
-	"license": "MIT",
+	"license": ["MIT", "LGPL-3.0-only", "CC-BY-4.0"],
 	"icon": "assets/fling/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
 			"mrkartoshki.fling.Fling"
+		],
+		"modmenu": [
+			"mrkartoshki.fling.client.FlingModMenu"
 		],
 		"client": [
 			"mrkartoshki.fling.client.FlingClient"
@@ -28,6 +31,9 @@
 			"environment": "client"
 		}
 	],
+	"suggests": {
+		"modmenu": ">=21.0.0"
+	},
 	"depends": {
 		"fabricloader": ">=0.19.5",
 		"minecraft": "~26.3",

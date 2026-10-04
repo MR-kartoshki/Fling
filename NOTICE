@@ -1,0 +1,17 @@
+Fling
+Original source code: Copyright (c) 2026 MR-kartoshki, MIT License (LICENSE).
+
+ItemPhysics.java contains modified portions adapted from:
+- ItemPhysic Lite, Copyright CreativeMD, branch 26.x
+  https://github.com/CreativeMD/ItemPhysicLite
+  LGPL-3.0 (LICENSE-ItemPhysicLite).
+- CreativeCore, Copyright CreativeMD, branch 26.x
+  https://github.com/CreativeMD/CreativeCore
+  LGPL-3.0 (LICENSE-CreativeCore).
+The corresponding GNU GPL v3 text is included in LICENSE-GPL-3.0.
+
+Original visual and audio assets: CC BY 4.0 (LICENSE-ASSETS).
+Fling icon: Copyright RadRad, CC BY 4.0.
+
+Source code, including the modified adapted portions:
+https://github.com/MR-kartoshki/Fling
